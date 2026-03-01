@@ -30,8 +30,10 @@ func (cc *ClientController) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": "Données invalides"})
 		return
 	}
-	// Login par défaut : admin / admin
-	if form.Username == "admin" && form.Password == "admin" {
+	// Importe le package config en haut du fichier: "utm-panel/config"
+// ...
+// Utilise la config globale :
+if form.Username == config.GlobalConfig.AdminUser && form.Password == config.GlobalConfig.AdminPass {
 		c.SetCookie("session", "logged_in", 3600*24, "/", "", false, false)
 		c.JSON(http.StatusOK, gin.H{"success": true})
 	} else {
