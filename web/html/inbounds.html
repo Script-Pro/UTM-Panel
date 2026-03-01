@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Clients - UTM Panel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/ant-design-vue/antd.min.css">
+</head>
+<body style="padding: 20px; background: #f0f2f5;">
+    <div id="app">
+        <a-card title="Liste des Clients VPN (SSH / UDP / ZiVPN)" :bordered="false">
+            <a-button type="primary" icon="plus" style="margin-bottom: 16px" @click="showAddModal">Ajouter Client</a-button>
+            
+            <a-table :columns="columns" :data-source="clients" row-key="id">
+                <template slot="usage" slot-scope="text, record">
+                    <div>{{ record.down }} / {{ record.total }}</div>
+                    <a-progress :percent="calculatePercent(record.down, record.total)" size="small"></a-progress>
+                </template>
+                <template slot="action" slot-scope="text, record">
+                    <a-button type="danger" size="small" icon="delete" @click="deleteClient(record.id)">Suppr</a-button>
+                    <a-button type="default" size="small" icon="reload" @click="resetClient(record.id)">Reset</a-button>
+                </template>
+            </a-table>
+        </a-card>
+
+        <a-modal v-model="visible" title="Nouveau Client" @ok="handleAdd">
+            <a-form layout="vertical">
+                <a-form-item label="Nom d'utilisateur (Username)">
+                    <a-input v-model="form.username" />
+                </a-form-item>
+                <a-form-item label="Mot de passe">
+                    <a-input v-model="form.password" />
+                </a-form-item>
+                <a-form-item label="Quota (Go) - 0 pour illimité">
+                    <a-input-number v-model="form.total_gb" :min="0" />
+                </a-form-item>
+                <a-form-item label="Expiration (Jours)">
+                    <a-input-number v-model="form.expiry_days" :min="1" />
+                </a-form-item>
+                <a-form-item label="Protocoles autorisés">
+                    <a-checkbox v-model="form.udp">UDP Custom</a-checkbox>
+                    <a-checkbox v-model="form.zivpn">ZiVPN</a-checkbox>
+                    <a-checkbox v-model="form.slowdns">SlowDNS</a-checkbox>
+                </a-form-item>
+            </a-form>
+        </a-modal>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/vue/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/ant-design-vue/antd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/axios/axios.min.js"></script>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                clients: [],
+                visible: false,
+                form: { username: '', password: '', total_gb: 10, expiry_days: 30, udp: true, zivpn: true, slowdns: true },
+                columns: [
+                    { title: 'ID', dataIndex: 'id', width: '50px' },
+                    { title: 'Username', dataIndex: 'username' },
+                    { title: 'Password', dataIndex: 'password' },
+                    { title: 'Consommation', scopedSlots: { customRender: 'usage' } },
+                    { title: 'Date Expiration', dataIndex: 'expiry_date' },
+                    { title: 'Action', scopedSlots: { customRender: 'action' } }
+                ]
+            },
+            mounted() {
+                this.fetchClients();
+            },
+            methods: {
+                fetchClients() {
+                    axios.get('/panel/api/inbound/list').then(res => {
+                        this.clients = res.data.obj;
+                    });
+                },
+                showAddModal() { this.visible = true; },
+                handleAdd() {
+                    axios.post('/panel/api/inbound/add', this.form).then(res => {
+                        if (res.data.success) {
+                            this.$message.success('Client créé avec succès !');
+                            this.visible = false;
+                            this.fetchClients();
+                        } else {
+                            this.$message.error('Erreur: ' + res.data.msg);
+                        }
+                    });
+                },
+                deleteClient(id) {
+                    axios.post('/panel/api/inbound/del/' + id).then(() => {
+                        this.$message.success('Supprimé');
+                        this.fetchClients();
+                    });
+                },
+                resetClient(id) {
+                    axios.post('/panel/api/inbound/reset/' + id).then(() => {
+                        this.$message.success('Trafic remis à zéro');
+                        this.fetchClients();
+                    });
+                },
+                calculatePercent(used, total) {
+                    if (!total || total === 0) return 0;
+                    return Math.min(100, Math.round((used / total) * 100));
+                }
+            }
+        });
+    </script>
+</body>
+      </html>
