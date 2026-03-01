@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>UTM Panel - Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/ant-design-vue/antd.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/css/custom.min.css">
+    <style>
+        /* Ajustements pour UTM Panel */
+        .layout-header { background: #001529; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: white; font-size: 20px; font-weight: bold; }
+        .content-main { margin: 24px 16px; padding: 24px; background: #fff; min-height: 280px; }
+        body { background: #f0f2f5; }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <a-layout style="min-height: 100vh">
+            <a-layout-sider v-model="collapsed" collapsible>
+                <div class="logo" style="height: 32px; margin: 16px; text-align: center;">UTM</div>
+                
+                <a-menu theme="dark" :default-selected-keys="['1']" mode="inline">
+                    <a-menu-item key="1" @click="nav('/panel/')">
+                        <a-icon type="dashboard"></a-icon><span>Dashboard</span>
+                    </a-menu-item>
+                    <a-menu-item key="2" @click="nav('/panel/inbounds')">
+                        <a-icon type="user"></a-icon><span>Gestion Clients</span>
+                    </a-menu-item>
+                    <a-menu-item key="3" @click="nav('/panel/settings')">
+                        <a-icon type="setting"></a-icon><span>Paramètres</span>
+                    </a-menu-item>
+                    <a-menu-item key="4" @click="logout">
+                        <a-icon type="logout"></a-icon><span>Déconnexion</span>
+                    </a-menu-item>
+                </a-menu>
+
+            </a-layout-sider>
+            
+            <a-layout>
+                <a-layout-header class="layout-header">
+                    <div style="color:white">Bienvenue sur UTM Manager</div>
+                </a-layout-header>
+                <a-layout-content>
+                    <div class="content-main">
+                        <h1>📊 État du Serveur</h1>
+                        <a-row :gutter="16">
+                            <a-col :span="8">
+                                <a-card title="CPU" :bordered="false">
+                                    <a-progress type="circle" :percent="status.cpu" status="active"></a-progress>
+                                </a-card>
+                            </a-col>
+                            <a-col :span="8">
+                                <a-card title="RAM" :bordered="false">
+                                    <a-progress type="circle" :percent="status.mem" status="active" stroke-color="orange"></a-progress>
+                                </a-card>
+                            </a-col>
+                            <a-col :span="8">
+                                <a-card title="Disque" :bordered="false">
+                                    <a-progress type="circle" :percent="status.disk" status="exception"></a-progress>
+                                </a-card>
+                            </a-col>
+                        </a-row>
+                    </div>
+                </a-layout-content>
+            </a-layout>
+        </a-layout>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/vue/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/ant-design-vue/antd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/axios/axios.min.js"></script>
+    
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                collapsed: false,
+                status: { cpu: 0, mem: 0, disk: 0 }
+            },
+            mounted() {
+                this.startStatsLoop();
+            },
+            methods: {
+                nav(url) { window.location.href = url; },
+                logout() { window.location.href = '/logout'; },
+                startStatsLoop() {
+                    // Simulation stats pour l'instant (sera connecté au backend plus tard)
+                    setInterval(() => {
+                        this.status.cpu = Math.floor(Math.random() * 30) + 10;
+                        this.status.mem = Math.floor(Math.random() * 40) + 20;
+                        this.status.disk = 45;
+                    }, 2000);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
