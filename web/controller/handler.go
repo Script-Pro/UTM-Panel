@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"utm-panel/config"   
 	"utm-panel/database"
 	"utm-panel/service"
 
@@ -30,10 +31,9 @@ func (cc *ClientController) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": "Données invalides"})
 		return
 	}
-	// Importe le package config en haut du fichier: "utm-panel/config"
-// ...
-// Utilise la config globale :
-if form.Username == config.GlobalConfig.AdminUser && form.Password == config.GlobalConfig.AdminPass {
+	
+	// Utilise la config globale pour vérifier le mot de passe
+	if form.Username == config.GlobalConfig.AdminUser && form.Password == config.GlobalConfig.AdminPass {
 		c.SetCookie("session", "logged_in", 3600*24, "/", "", false, false)
 		c.JSON(http.StatusOK, gin.H{"success": true})
 	} else {
