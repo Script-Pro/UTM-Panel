@@ -74,7 +74,7 @@ ExecStart=$APP_DIR/utm-panel
 Restart=always
 RestartSec=3
 # Configuration par défaut
-Environment="PANEL_PORT=8080"
+Environment="PANEL_PORT=8081"
 Environment="ADMIN_USER=admin"
 Environment="ADMIN_PASS=admin"
 Environment="DB_PATH=$APP_DIR/utm.db"
