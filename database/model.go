@@ -1,33 +1,31 @@
 package database
 
-import (
-	"gorm.io/gorm"
-)
+// J'ai supprimé la ligne import "gorm.io/gorm" car elle bloquait la compilation
 
-// Client : C'est la structure qui représente un utilisateur dans ton panel
+// Client : Structure utilisateur
 type Client struct {
 	ID           int    `gorm:"primaryKey;autoIncrement" json:"id"`
 	Username     string `gorm:"unique;not null" json:"username"`
 	Password     string `json:"password"`
 	
 	// Gestion de l'expiration et du quota
-	ExpiryTime   int64  `json:"expiry_time"` // Date d'expiration (Timestamp Unix)
-	Total        int64  `json:"total"`       // Quota total en Octets (Bytes)
-	Up           int64  `json:"up"`          // Upload consommé
-	Down         int64  `json:"down"`        // Download consommé
+	ExpiryTime   int64  `json:"expiry_time"` 
+	Total        int64  `json:"total"`       
+	Up           int64  `json:"up"`          
+	Down         int64  `json:"down"`        
 	
 	// État
-	Enable       bool   `json:"enable"`      // Le compte est-il actif ?
+	Enable       bool   `json:"enable"`      
 	
-	// Permissions des protocoles (Cocher les cases dans le panel)
+	// Permissions
 	UDPCustom    bool   `json:"udp_custom"`
 	ZiVPN        bool   `json:"zivpn"`
 	SlowDNS      bool   `json:"slowdns"`
 }
 
-// Setting : Pour sauvegarder les ports et configurations globales
+// Setting : Configuration
 type Setting struct {
 	ID    int    `gorm:"primaryKey" json:"id"`
-	Key   string `gorm:"unique" json:"key"`   // Ex: "udp_port", "zivpn_port"
-	Value string `json:"value"`               // Ex: "36712", "5667"
+	Key   string `gorm:"unique" json:"key"`
+	Value string `json:"value"`
 }
