@@ -19,7 +19,7 @@ var GlobalConfig *AppConfig
 func LoadConfig() {
 	// Par défaut, on utilise ces valeurs si rien n'est configuré
 	GlobalConfig = &AppConfig{
-		ListenPort: getEnv("PANEL_PORT", "8080"),      // Le panel sera sur le port 8080
+		ListenPort: getEnv("PANEL_PORT", "8081"),      // Le panel sera sur le port 8080
 		AdminUser:  getEnv("ADMIN_USER", "admin"),     // Login par défaut
 		AdminPass:  getEnv("ADMIN_PASS", "admin"),     // Mot de passe par défaut
 		DBPath:     getEnv("DB_PATH", "/etc/utm-panel/utm.db"), // Où est stockée la DB
