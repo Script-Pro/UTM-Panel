@@ -1,7 +1,5 @@
 package database
 
-// J'ai supprimé la ligne import "gorm.io/gorm" car elle bloquait la compilation
-
 // Client : Structure utilisateur
 type Client struct {
 	ID           int    `gorm:"primaryKey;autoIncrement" json:"id"`
@@ -21,6 +19,9 @@ type Client struct {
 	UDPCustom    bool   `json:"udp_custom"`
 	ZiVPN        bool   `json:"zivpn"`
 	SlowDNS      bool   `json:"slowdns"`
+
+	// Le champ qui manquait :
+	CreatedTime  int64  `json:"created_time"`
 }
 
 // Setting : Configuration
