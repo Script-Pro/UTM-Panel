@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Login - UTM Panel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/ant-design-vue/antd.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/css/custom.min.css">
+    <style>
+        body { background: #141414; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .login-card { width: 350px; background: #1f1f1f; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: center; }
+        .logo-title { font-size: 24px; font-weight: bold; margin-bottom: 20px; color: #1890ff; }
+    </style>
+</head>
+<body>
+    <div id="app" class="login-card">
+        <div class="logo-title">UTM MANAGER PRO</div>
+        <a-form :model="loginUser" @submit.native.prevent="login">
+            <a-form-item>
+                <a-input v-model="loginUser.username" placeholder="Username" size="large">
+                    <a-icon slot="prefix" type="user"></a-icon>
+                </a-input>
+            </a-form-item>
+            <a-form-item>
+                <a-input v-model="loginUser.password" type="password" placeholder="Password" size="large">
+                    <a-icon slot="prefix" type="lock"></a-icon>
+                </a-input>
+            </a-form-item>
+            <a-form-item>
+                <a-button type="primary" html-type="submit" :loading="loading" block size="large">LOGIN</a-button>
+            </a-form-item>
+        </a-form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/vue/vue.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/ant-design-vue/antd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/MHSanaei/3x-ui@main/web/assets/axios/axios.min.js"></script>
+    
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                loginUser: { username: '', password: '' },
+                loading: false
+            },
+            methods: {
+                async login() {
+                    this.loading = true;
+                    try {
+                        const res = await axios.post('/login', this.loginUser);
+                        if (res.data.success) {
+                            window.location.href = '/panel/';
+                        } else {
+                            this.$message.error(res.data.msg || 'Login Failed');
+                        }
+                    } catch (e) {
+                        this.$message.error('Connection Error');
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
